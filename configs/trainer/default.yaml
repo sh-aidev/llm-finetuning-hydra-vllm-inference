@@ -1,19 +1,23 @@
-_target_: lightning.pytorch.trainer.Trainer
+train_config:
+  _target_: transformers.TrainingArguments
 
-default_root_dir: ${paths.output_dir}
+  output_dir: ${paths.output_dir}
+  per_device_train_batch_size: 6
+  gradient_accumulation_steps: 2
+  gradient_checkpointing: true
+  # num_train_epochs: 1
+  max_steps: 2
+  learning_rate: 2.5e-5
+  logging_steps: 2
+  bf16: true
+  tf32: true
+  optim: "paged_adamw_32bit"
+  logging_dir: ${paths.log_dir}
+  save_strategy: "steps"
+  save_steps: 50
+  report_to: "tensorboard"
+  run_name: ${model.model_id}-${now:%Y-%m-%d-%H-%M}         # Name of the W&B run (optional)
 
-min_epochs: 1 # prevents early stopping
-max_epochs: 6
-
-accelerator: cpu
-devices: 1
-
-# mixed precision for extra speed-up
-# precision: 16
-
-# perform a validation loop every N training epochs
-check_val_every_n_epoch: 1
-
-# set True to to ensure deterministic results
-# makes training slower but gives more reproducibility than just setting seeds
-deterministic: False
+max_seq_len: 2048
+packing: true
+neftune_noise_alpha: 5
