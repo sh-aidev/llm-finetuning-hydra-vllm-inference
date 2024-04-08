@@ -1,0 +1,3 @@
+_target_: datasets.load_dataset
+path: "c-s-ale/alpaca-gpt4-data" # databricks/databricks-dolly-15k
+split: "train"

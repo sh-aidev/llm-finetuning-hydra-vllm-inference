@@ -1,0 +1,22 @@
+# @package _global_
+
+# specify here default configuration
+# order of defaults determines the order in which configs override each other
+defaults:
+  - _self_
+  - data: default.yaml
+  - model: default.yaml
+  - paths: default.yaml
+  - trainer: default.yaml
+  - hydra: default.yaml
+  - server: default.yaml
+
+
+# task name, determines output directory path
+task_name: "train" # "infer"
+
+# local logging environment
+environment: "dev" # "prod"
+
+# seed for random number generators in pytorch, numpy and python.random
+seed: null

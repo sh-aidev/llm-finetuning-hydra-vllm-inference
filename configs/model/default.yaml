@@ -1,0 +1,39 @@
+lora:
+  _target_: peft.LoraConfig
+  lora_alpha: 16
+  lora_dropout: 0.1
+  r: 64
+  bias: "none"
+  task_type: "CAUSAL_LM"
+  target_modules: [
+        "q_proj",
+        "k_proj",
+        "v_proj",
+        # "o_proj",
+        # "gate_proj",
+        # "up_proj",
+        # "down_proj",
+        # "lm_head",
+  ]
+
+
+bitsandbytes:
+  _target_: transformers.BitsAndBytesConfig
+  load_in_4bit: true
+  bnb_4bit_use_double_quant: true
+  bnb_4bit_quant_type: "nf4"
+  bnb_4bit_compute_dtype: "bfloat16"
+
+model_id: "mistralai/Mistral-7B-v0.1"
+
+model:
+  _target_: transformers.AutoModelForCausalLM.from_pretrained
+  pretrained_model_name_or_path: ${model.model_id}
+  quantization_config: ${model.bitsandbytes}
+  use_cache: False
+  use_flash_attention_2: True
+  device_map: "auto"
+
+tokenizer:
+  _target_: transformers.AutoTokenizer.from_pretrained
+  pretrained_model_name_or_path: ${model.model_id}
