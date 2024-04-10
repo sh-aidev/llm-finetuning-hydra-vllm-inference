@@ -1,5 +1,3 @@
-# Run the vllm backend with fine tuned model
-
 from openai import OpenAI
 
 openai_api_key = "EMPTY"
@@ -11,7 +9,7 @@ client = OpenAI(
 )
 
 chat_response = client.chat.completions.create(
-    model="mistral-7b-v0.1-alpaca-chat",
+    model="satyajitghana/mistral-7b-v0.1-alpaca-chat",
     messages=[
         {"role": "system", "content": "List 3 historical events related to the following country"},
         {"role": "user", "content": "India"},
