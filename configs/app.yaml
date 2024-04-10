@@ -11,12 +11,21 @@ defaults:
   - hydra: default.yaml
   - server: default.yaml
 
-
 # task name, determines output directory path
-task_name: "train" # "infer"
+task_name: "server" # "infer"/"train"/"server"
+
+max_token_len: 512
+top_p: 0.9
+temperature: 0.9
+
+# huggingface details
+push_huggingface: false
+hf_model_id: "sh-aidev/mistral-7b-v0.1-alpaca-chat"
+
+# model checkpoint path for inference and hf push
+model: "outputs" # either model folder or model id huggingface
 
 # local logging environment
 environment: "dev" # "prod"
 
-# seed for random number generators in pytorch, numpy and python.random
-seed: null
+# input: null

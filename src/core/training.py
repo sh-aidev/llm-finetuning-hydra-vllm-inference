@@ -1,16 +1,14 @@
 import hydra
-import torch
-from datetime import datetime
 from pathlib import Path
-from transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig, TrainingArguments, pipeline
-from peft import LoraConfig, AutoPeftModelForCausalLM, prepare_model_for_kbit_training, get_peft_model
-from datasets import load_dataset
-from peft import PeftModel
+# from transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig, TrainingArguments, pipeline
+from peft import LoraConfig, prepare_model_for_kbit_training, get_peft_model #, AutoPeftModelForCausalLM
+# from datasets import load_dataset
+# from peft import PeftModel
 from trl import SFTTrainer
-from datasets import load_dataset
-from accelerate import Accelerator
-from accelerate.logging import get_logger
-from accelerate.utils import DistributedDataParallelKwargs, ProjectConfiguration, set_seed
+# from datasets import load_dataset
+# from accelerate import Accelerator
+# from accelerate.logging import get_logger
+# from accelerate.utils import DistributedDataParallelKwargs, ProjectConfiguration, set_seed
 
 from omegaconf import DictConfig
 
@@ -68,25 +66,12 @@ class FinetuningTraining():
         )
         logger.debug(f"Trainer initialized...")
 
-    def train(self):
+    def run(self):
         logger.debug(f"Training model...")
         self.trainer.train()
         logger.debug(f"Training complete...")
-    
-    def save_model(self):
-        self.trainer.save_model()
-    
-    def push_to_huggingface(self):
-        model = AutoPeftModelForCausalLM.from_pretrained(
-            "outputs",
-            low_cpu_mem_usage=True,
-            torch_dtype=torch.float16,
-        )
-        tokenizer = AutoTokenizer.from_pretrained("outputs")
-        tokenizer.pad_token = tokenizer.eos_token
-        tokenizer.padding_side = "right"
 
-        # Merge LoRA and base model
-        merged_model = model.merge_and_unload()
-        merged_model.push_to_hub("sh-aidev/mistral-7b-v0.1-alpaca-chat")
-        tokenizer.push_to_hub("sh-aidev/mistral-7b-v0.1-alpaca-chat")
+        logger.debug(f"Saving model...")
+        self.trainer.save_model()
+        logger.debug(f"Model saved...")
+

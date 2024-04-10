@@ -9,8 +9,7 @@ def main(cfg: DictConfig) -> None:
     logger.debug(f"Running app with config: {cfg}")
     app = App(cfg)
     app.run()
-    
-    
+
 
 if __name__ == "__main__":
     main()

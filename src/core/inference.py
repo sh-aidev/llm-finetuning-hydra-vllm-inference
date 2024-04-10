@@ -1,30 +1,72 @@
 import torch
 from peft import AutoPeftModelForCausalLM
-from transformers import AutoTokenizer
+from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline
+from src.utils.logger import logger
 
-model = AutoPeftModelForCausalLM.from_pretrained(
-    "outputs",
-    low_cpu_mem_usage=True,
-    torch_dtype=torch.float16,
-    load_in_4bit=True,
-)
-tokenizer = AutoTokenizer.from_pretrained("outputs")
-tokenizer.pad_token = tokenizer.eos_token
-tokenizer.padding_side = "right"
+class LLMInference:
+    def __init__(self, cfg):
+        self.cfg = cfg
+        logger.debug(f"Initializing LLMInference...")
+        logger.debug(f"Loading model...")
+        self.model = AutoPeftModelForCausalLM.from_pretrained(
+            cfg.model,
+            low_cpu_mem_usage=True,
+            torch_dtype=torch.float16,
+            load_in_4bit=True,
+        )
+        logger.debug(f"Loading tokenizer...")
+        self.tokenizer = AutoTokenizer.from_pretrained(cfg.model)
+        self.tokenizer.pad_token = self.tokenizer.eos_token
+        self.tokenizer.padding_side = "right"
+        logger.debug(f"Model and tokenizer loaded...")
+        
+    def run(self, input_text: str) -> str:
+        logger.debug(f"Running inference...")
+        input_ids = self.tokenizer(input_text, return_tensors="pt", truncation=True).input_ids.cuda()
+        logger.debug(f"Generating output...")
+        outputs = self.tokenizer.decode(
+            self.model.generate(input_ids=input_ids, max_new_tokens=self.cfg.max_token_len, do_sample=True, top_p=self.cfg.top_p, temperature=self.cfg.temperature)[0],
+            skip_special_tokens=True
+        )
+        logger.debug(f"Generated output: {outputs}")
+        return outputs
 
-INPUT = """
-### Instruction:
-List 3 historical events related to the following country
+    def push_to_huggingface(self) -> None:
+        logger.debug(f"Pushing model to Huggingface...")
+        merged_model = self.model.merge_and_unload()
+        logger.debug(f"Model merged and unloaded...")
+        merged_model.push_to_hub(self.cfg.hf_model_id)
+        logger.debug(f"Model pushed to Huggingface...")
+        self.tokenizer.push_to_hub(self.cfg.hf_model_id)
+        logger.debug(f"Tokenizer pushed to Huggingface...")
 
-### Input:
-Canada
+class LLMInferenceHF:
+    def __init__(self, cfg) -> None:
+        self.cfg = cfg
+        logger.debug(f"Initializing LLMInferenceHF...")
+        logger.debug(f"Loading tokenizer...")
+        self.tokenizer = AutoTokenizer.from_pretrained(cfg.hf_model_id)
 
-### Response:
-"""
+        logger.debug(f"Loading model...")
+        self.model = AutoModelForCausalLM.from_pretrained(
+            cfg.hf_model_id,
+            torch_dtype=torch.float16,
+            device_map="auto"
+        )
+        self.pipe = pipeline(
+            "text-generation", 
+            model=self.model, 
+            tokenizer=self.tokenizer, 
+        )
+        logger.debug(f"Pipeline created...")
+    
+    def run(self, input_text: str) -> str:
+        logger.debug(f"Running inference...")
+        out = self.pipe(
+            input_text,
+            max_new_tokens=self.cfg.max_token_len
+        )
+        logger.debug(f"Generated output: {out[0]['generated_text']}")
+        return out[0]['generated_text']
 
-input_ids = tokenizer(INPUT, return_tensors="pt", truncation=True).input_ids.cuda()
-outputs = tokenizer.decode(
-    model.generate(input_ids=input_ids, max_new_tokens=400, do_sample=True, top_p=0.9, temperature=0.9)[0],
-    skip_special_tokens=True
-)
-print(outputs)
+
