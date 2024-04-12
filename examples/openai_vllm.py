@@ -9,7 +9,7 @@ client = OpenAI(
 )
 
 chat_response = client.chat.completions.create(
-    model="satyajitghana/mistral-7b-v0.1-alpaca-chat",
+    model="sh-aidev/mistral-7b-v0.1-alpaca-chat",
     messages=[
         {"role": "system", "content": "List 3 historical events related to the following country"},
         {"role": "user", "content": "India"},

@@ -47,7 +47,7 @@ class LLMInferenceHF:
         logger.debug(f"Loading tokenizer...")
         self.tokenizer = AutoTokenizer.from_pretrained(cfg.hf_model_id)
 
-        logger.debug(f"Loading model...")
+        logger.debug(f"Loading model: {cfg.hf_model_id}...")
         self.model = AutoModelForCausalLM.from_pretrained(
             cfg.hf_model_id,
             torch_dtype=torch.float16,
@@ -68,5 +68,11 @@ class LLMInferenceHF:
         )
         logger.debug(f"Generated output: {out[0]['generated_text']}")
         return out[0]['generated_text']
+
+    # def push_to_huggingface(self) -> None:
+    #     self.model.push_to_hub(self.cfg.hf_model_id)
+    #     logger.debug(f"Model pushed to Huggingface...")
+    #     self.tokenizer.push_to_hub(self.cfg.hf_model_id)
+    #     logger.debug(f"Tokenizer pushed to Huggingface...")
 
 

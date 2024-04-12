@@ -96,8 +96,9 @@ python3 __main__.py
 
 ### Step 6: To Run the model vllm backend
 ```bash
-python3 -m vllm.entrypoints.openai.api_server --model "satyajitghana/mistral-7b-v0.1-alpaca-chat" --chat-template ./templates/template_alpaca.jinja --max-model-len 512
+python3 -m vllm.entrypoints.openai.api_server --model "sh-aidev/mistral-7b-v0.1-alpaca-chat" --chat-template ./templates/template_alpaca.jinja --max-model-len 512
 ```
+
 
 ## 📜  References
 - [Hydra](https://hydra.cc/)
