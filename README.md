@@ -14,7 +14,7 @@ This repository contains the code for finetuning a language model using the hydr
 - [x] Finetuning a language model using hydra framework
 - [x] Deploying the model using FastApi
 - [x] Added a simple frontend to interact with the FastApi app
-- [ ] Run finetuned model with vllm backend to get openai like completion
+- [x] Run finetuned model with vllm backend to get openai like completion
 
 ## 📁  Project Structure
 The directory structure of new project looks like this:
@@ -98,7 +98,7 @@ python3 __main__.py
 ```bash
 python3 -m vllm.entrypoints.openai.api_server --model "sh-aidev/mistral-7b-v0.1-alpaca-chat" --chat-template ./templates/template_alpaca.jinja --max-model-len 512
 ```
-
+`NOTE`: Please find the frontend code [here](https://github.com/sh-aidev/openai-chat-clone.git).
 
 ## 📜  References
 - [Hydra](https://hydra.cc/)
