@@ -16,8 +16,7 @@ class App:
         elif self.cfg.task_name == "infer":
             self.llm = LLMInference(cfg)
         elif self.cfg.task_name == "server":
-            router = get_router(cfg)
-            self.llm = LLMServer(cfg, router)
+            self.llm = LLMServer(cfg)
 
     def run(self):
         if self.cfg.task_name == "infer":

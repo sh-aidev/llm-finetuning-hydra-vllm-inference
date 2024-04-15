@@ -1,14 +1,9 @@
 import hydra
 from pathlib import Path
-# from transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig, TrainingArguments, pipeline
+
 from peft import LoraConfig, prepare_model_for_kbit_training, get_peft_model #, AutoPeftModelForCausalLM
-# from datasets import load_dataset
-# from peft import PeftModel
+
 from trl import SFTTrainer
-# from datasets import load_dataset
-# from accelerate import Accelerator
-# from accelerate.logging import get_logger
-# from accelerate.utils import DistributedDataParallelKwargs, ProjectConfiguration, set_seed
 
 from omegaconf import DictConfig
 

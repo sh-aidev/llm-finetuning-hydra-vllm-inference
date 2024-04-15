@@ -6,9 +6,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from src.utils.logger import logger
 from src.core.inference import LLMInference, LLMInferenceHF
 
-v1Router = APIRouter()
 
 def get_router(cfg: DictConfig) -> APIRouter:
+    v1Router = APIRouter()
     llm = LLMInferenceHF(cfg)
     @v1Router.post("/llm-infer", status_code=200)
     def generate(
@@ -22,7 +22,7 @@ def get_router(cfg: DictConfig) -> APIRouter:
     return v1Router
 
 class LLMServer:
-    def __init__(self, cfg: DictConfig, router: APIRouter) -> None:
+    def __init__(self, cfg: DictConfig) -> None:
         self.cfg = cfg
         self.port = cfg.server.port
         self.host = cfg.server.host
@@ -36,6 +36,7 @@ class LLMServer:
             allow_headers=["*"],
             
         )
+        router = get_router(cfg)
         self.server.include_router(router, prefix="/v1")
     
     def run(self):
